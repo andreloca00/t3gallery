@@ -1,14 +1,25 @@
+import { clerkClient } from "@clerk/nextjs/server";
 import { getImage } from "~/server/queries";
 
 export default async function FullPageImageView(props: { id: number }) {
   const image = await getImage(props.id);
+  const uploaderInfo = await clerkClient.users.getUser(image.userId);
+
   return (
-    <div className="flex h-full w-full min-w-0 items-center justify-center text-white">
-      <div className="flex-shrink">
-        <img src={image.url} alt={image.name} className="w-96 object-contain" />
+    <div className="flex h-full w-full min-w-0  text-white">
+      <div className="flex flex-shrink items-center justify-center ">
+        <img
+          src={image.url}
+          alt={image.name}
+          className="w-96 flex-shrink object-contain"
+        />
       </div>
-      <div className="flex w-48 flex-shrink-0 flex-col">
-        <h2 className="text-xl font-bold">{image.name}</h2>
+      <div className="flex w-48 flex-grow flex-col border-l">
+        <h2 className="border-b p-2 text-center text-lg">{image.name}</h2>
+        <p className="p-2">Uploaded By: {uploaderInfo.fullName}</p>
+        <p className="p-2">
+          Created At: {new Date(image.createdAt).toLocaleDateString()}
+        </p>
       </div>
     </div>
   );
