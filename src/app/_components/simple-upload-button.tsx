@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useUploadThing } from "~/utils/uploadthing";
+import { toast } from "sonner";
 
 const UploadSVG = () => {
   return (
@@ -18,6 +19,22 @@ const UploadSVG = () => {
         strokeLinejoin="round"
         d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
       />
+    </svg>
+  );
+};
+
+const LoadingSVG = () => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      stroke="#000"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g className="spinner_V8m1">
+        <circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3"></circle>
+      </g>
     </svg>
   );
 };
@@ -54,7 +71,21 @@ export function SimpleUploadButton() {
     "imageUploader",
     {
       onClientUploadComplete(res) {
+        toast.dismiss("uploading-toast");
+        toast("Upload complete!");
         router.refresh();
+      },
+      onUploadBegin() {
+        toast(
+          <div className="flex items-center gap-2">
+            <LoadingSVG />
+            Uploading...
+          </div>,
+          {
+            duration: 100000,
+            id: "uploading-toast",
+          },
+        );
       },
     },
   );
